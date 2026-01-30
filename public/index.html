@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk & Daftar | Lib-Geo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-8 border-indigo-600">
+        <div class="text-center mb-8">
+            <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i id="formIcon" class="fas fa-lock text-indigo-600 text-2xl"></i>
+            </div>
+            <h2 id="formTitle" class="text-2xl font-bold text-gray-800">Perpustakaan Login</h2>
+            <p id="formSub" class="text-gray-500 text-sm mt-1">Silakan masuk untuk mengakses katalog</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="relative">
+                <i class="fas fa-user absolute left-3 top-4 text-gray-400"></i>
+                <input type="text" id="username" placeholder="Username" 
+                    class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition-all">
+            </div>
+            
+            <div class="relative">
+                <i class="fas fa-key absolute left-3 top-4 text-gray-400"></i>
+                <input type="password" id="password" placeholder="Password" 
+                    class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent outline-none transition-all">
+            </div>
+
+            <button id="mainBtn" onclick="handleLogin()" 
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-200">
+                Masuk ke Akun
+            </button>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p id="switchText" class="text-gray-600 text-sm">
+                Belum punya akun? 
+                <button onclick="toggleForm()" class="text-indigo-600 font-bold hover:underline underline-offset-4 cursor-pointer">Daftar Sekarang</button>
+            </p>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold italic">Lib-Geo Mobile Development v1.1</p>
+        </div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+        function toggleForm() {
+            isLoginMode = !isLoginMode;
+            
+            const title = document.getElementById('formTitle');
+            const sub = document.getElementById('formSub');
+            const btn = document.getElementById('mainBtn');
+            const text = document.getElementById('switchText');
+            const icon = document.getElementById('formIcon');
+
+            if (isLoginMode) {
+                title.innerText = "Perpustakaan Login";
+                sub.innerText = "Silakan masuk untuk mengakses katalog";
+                btn.innerText = "Masuk ke Akun";
+                btn.setAttribute('onclick', 'handleLogin()');
+                icon.className = "fas fa-lock text-indigo-600 text-2xl";
+                text.innerHTML = `Belum punya akun? <button onclick="toggleForm()" class="text-indigo-600 font-bold hover:underline underline-offset-4">Daftar Sekarang</button>`;
+            } else {
+                title.innerText = "Buat Akun Baru";
+                sub.innerText = "Daftar sebagai mahasiswa untuk meminjam buku";
+                btn.innerText = "Daftar Sekarang";
+                btn.setAttribute('onclick', 'handleRegister()');
+                icon.className = "fas fa-user-plus text-indigo-600 text-2xl";
+                text.innerHTML = `Sudah punya akun? <button onclick="toggleForm()" class="text-indigo-600 font-bold hover:underline underline-offset-4">Login Saja</button>`;
+            }
+        }
+        async function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) return alert("Harap isi username dan password!");
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('username', data.username);
+                    window.location.href = data.role === 'admin' ? '/admin' : '/user';
+                } else {
+                    alert("Gagal Masuk: " + data.message);
+                }
+            } catch (err) {
+                alert("Koneksi ke server gagal!");
+            }
+        }
+        async function handleRegister() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) return alert("Lengkapi data pendaftaran!");
+
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Registrasi Berhasil! Silakan gunakan akun Anda untuk login.");
+                    toggleForm(); // Kembali ke tampilan login
+                } else {
+                    alert("Registrasi Gagal: " + data.message);
+                }
+            } catch (err) {
+                alert("Masalah jaringan!");
+            }
+        }
+    </script>
+</body>
+</html>
