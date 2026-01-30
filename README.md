@@ -93,3 +93,18 @@ User Mode (Header x-user-role: user & x-user-id: [id]):
 
 POST /api/borrow : Meminjam buku
 <img width="940" height="423" alt="image" src="https://github.com/user-attachments/assets/ffef7e5a-ccf6-49dc-96e9-942d12bb27af" />
+
+##
+Dokumentasi Struktur Database
+
+Tabel Books
+<img width="1647" height="792" alt="image" src="https://github.com/user-attachments/assets/80e656a7-dd21-4867-9448-b92d76661c37" />
+
+Tabel Peminjaman
+<img width="1638" height="803" alt="image" src="https://github.com/user-attachments/assets/26c71882-e984-4454-a07e-a51f2379a314" />
+
+Tabel User
+<img width="1617" height="752" alt="image" src="https://github.com/user-attachments/assets/f3a758e5-11a0-416d-bfc6-492237d2c33a" />
+
+
+
